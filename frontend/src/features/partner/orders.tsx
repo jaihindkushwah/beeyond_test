@@ -72,7 +72,7 @@ function PartnerOrderHistory() {
                 </p>
               )}
               {pastOrders.map((order) => (
-                <OrderCard order={{ ...order }}></OrderCard>
+                <OrderCard key={order._id} order={{ ...order }}></OrderCard>
               ))}
             </div>
           </div>

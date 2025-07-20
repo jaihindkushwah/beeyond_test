@@ -86,6 +86,11 @@ function Notifications() {
           </p>
         </div>
         <div className="space-y-2">
+          {unassignedOrders.length === 0 && (
+            <div className="text-red-500 text-center text-sm">
+              You have no new order notifications
+            </div>
+          )}
           {unassignedOrders.map((order) => (
             <OrderCard key={order._id} order={order} />
           ))}

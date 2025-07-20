@@ -79,22 +79,37 @@ export function PartnerContextProvider({
     };
 
     const handleOrderStatusChange = (data: ISocketOrderChangeResponse) => {
-      setUnassignedOrders((prev) =>
-        prev.filter(
-          (order) => order._id !== data.orderId && order.status != data.status
-        )
-      );
+      let acceptedOrder: IOrder = {} as any;
+
+      // Remove from unassignedOrders and extract it
+      setUnassignedOrders((prev) => {
+        const filtered = prev.filter((order) => {
+          const isMatch = order._id === data.orderId;
+          if (isMatch) acceptedOrder = order;
+          return !isMatch;
+        });
+        return filtered;
+      });
       if (data.updatedBy !== user.id) return;
-      setMyOrders((prev) =>
-        prev.map((order) => {
-          if (order._id === data.orderId)
-            return {
-              ...order,
-              status: data.status,
-            };
-          return order;
-        })
-      );
+
+      if (data.status === "accepted") {
+        if (acceptedOrder) {
+          setMyOrders((prev) =>
+            [
+              acceptedOrder,
+              ...prev.filter((order) => order._id !== data.orderId),
+            ].filter(Boolean)
+          );
+        }
+      } else {
+        setMyOrders((prev) =>
+          prev.map((order) =>
+            order._id === data.orderId
+              ? { ...order, status: data.status }
+              : order
+          )
+        );
+      }
     };
     const socket = partnerSocketService.socket;
     socket?.on("orderPlaced", handlePlacedOrder);
@@ -109,8 +124,9 @@ export function PartnerContextProvider({
 
   const acceptOrderHandler = (id: string) => {
     partnerSocketService.emitAcceptOrder({ orderId: id }, (res) => {
-      if (res.success) toast.success(res.message);
-      else toast.error(res.message);
+      if (res.success) {
+        toast.success(res.message);
+      } else toast.error(res.message);
     });
   };
 
