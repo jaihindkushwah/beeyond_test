@@ -3,7 +3,7 @@ import type React from "react";
 export type UserRole = "customer" | "partner" | "admin";
 
 export interface IUser {
-  _id: string;
+  id: string;
   name: string;
   email: string;
   password?: string;

@@ -79,6 +79,12 @@ export function PartnerContextProvider({
     };
 
     const handleOrderStatusChange = (data: ISocketOrderChangeResponse) => {
+      setUnassignedOrders((prev) =>
+        prev.filter(
+          (order) => order._id !== data.orderId && order.status != data.status
+        )
+      );
+      if (data.updatedBy !== user.id) return;
       setMyOrders((prev) =>
         prev.map((order) => {
           if (order._id === data.orderId)
@@ -88,11 +94,6 @@ export function PartnerContextProvider({
             };
           return order;
         })
-      );
-      setUnassignedOrders((prev) =>
-        prev.filter(
-          (order) => order._id !== data.orderId && order.status != data.status
-        )
       );
     };
     const socket = partnerSocketService.socket;
@@ -104,7 +105,7 @@ export function PartnerContextProvider({
       socket?.off("orderStatusChanged", handleOrderStatusChange);
       partnerSocketService.disconnect();
     };
-  }, [user?.token]);
+  }, [user?.id, user?.token]);
 
   const acceptOrderHandler = (id: string) => {
     partnerSocketService.emitAcceptOrder({ orderId: id }, (res) => {

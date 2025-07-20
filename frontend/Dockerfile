@@ -2,6 +2,7 @@
 FROM node:22-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
+COPY .env .env
 RUN npm install
 COPY . .
 RUN npm run build
