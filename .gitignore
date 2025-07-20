@@ -1,0 +1,49 @@
+# === General Node.js ===
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# === Environment Files ===
+.env
+.env.*
+!.env.example
+
+# === Build Directories ===
+dist/
+build/
+out/
+
+# === Vite Specific ===
+.vite/
+
+# === Logs and temp ===
+logs/
+*.log
+*.tmp
+*.bak
+
+# === IDE/editor ===
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*.swo
+
+# === Nginx Config Backup ===
+nginx/*.conf~
+
+# === Docker Volumes / Artifacts ===
+docker-volumes/
+*.pid
+
+# === Optional Secrets / Keys ===
+*.secret
+*.key
+*.pem
+*.crt
+certs/
