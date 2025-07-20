@@ -1,4 +1,4 @@
-import type { IUser } from "@/@types/auth";
+import type { IPartners } from "@/@types/auth";
 import type { IOrder } from "@/@types/order";
 import type { IProduct } from "@/@types/product";
 import { API_BASE_URL } from "@/lib/config";
@@ -7,7 +7,7 @@ import axios from "axios";
 
 export class AdminService {
   private axiosInstance!: AxiosInstance;
-  constructor(token:string) {
+  constructor(token: string) {
     this.axiosInstance = axios.create({
       baseURL: API_BASE_URL,
       headers: {
@@ -22,7 +22,7 @@ export class AdminService {
     const res = await this.axiosInstance.get("/admin/orders");
     return res.data?.data;
   }
-  async getAllPartners(): Promise<IUser[] | []> {
+  async getAllPartners(): Promise<IPartners[] | []> {
     const res = await this.axiosInstance.get("/admin/partners");
     return res.data?.data;
   }

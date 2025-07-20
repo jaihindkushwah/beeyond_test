@@ -13,6 +13,9 @@ export interface IUser {
   avatarUrl?: string;
   token?: string;
 }
+export interface IPartners extends IUser {
+  _id: string;
+}
 
 export interface IAuthContextType {
   isAuthenticated: boolean;

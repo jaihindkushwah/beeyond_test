@@ -1,4 +1,4 @@
-import type { IUser } from "@/@types/auth";
+import type { IPartners } from "@/@types/auth";
 import { useEffect, useState } from "react";
 import lodash from "lodash";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,7 +8,7 @@ import { getDataFromSessionStorage } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Mail, Hash } from "lucide-react";
 
-const PartnerCard = ({ partner }: { partner: IUser }) => {
+const PartnerCard = ({ partner }: { partner: IPartners }) => {
   return (
     <Card className="w-full px-5 max-w-xl shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl overflow-hidden border-0 bg-gradient-to-br from-white to-gray-50/50 hover:scale-[1.02] group">
       <CardContent className="p-6 ">
@@ -70,7 +70,7 @@ const PartnerCard = ({ partner }: { partner: IUser }) => {
 };
 
 function Partners() {
-  const [parnters, setPartners] = useState<IUser[]>([]);
+  const [parnters, setPartners] = useState<IPartners[]>([]);
   useEffect(() => {
     const fetchPartners = async () => {
       try {
