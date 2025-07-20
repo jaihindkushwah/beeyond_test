@@ -1,4 +1,5 @@
 import { AdminController } from "@/controller/admin";
+import { roleBased } from "@/middleware/rolebased";
 import { AdminService } from "@/service/admin";
 import { OrderService } from "@/service/order";
 import { PartnerService } from "@/service/partner";
@@ -20,11 +21,24 @@ export class AdminRoutes {
     this.adminController = new AdminController(adminService);
   }
   routes() {
-    this.router.post("/create-product", this.adminController.createNewProduct);
-    this.router.get("/orders", this.adminController.getAllOrders);
-    this.router.get("/partners", this.adminController.getAllPartners);
+    this.router.post(
+      "/create-product",
+      roleBased("admin"),
+      this.adminController.createNewProduct
+    );
+    this.router.get(
+      "/orders",
+      roleBased("admin"),
+      this.adminController.getAllOrders
+    );
+    this.router.get(
+      "/partners",
+      roleBased("admin"),
+      this.adminController.getAllPartners
+    );
     this.router.get(
       "/order-live-status",
+      roleBased("admin"),
       this.adminController.getAllOrderLiveStatus
     );
     return this.router;

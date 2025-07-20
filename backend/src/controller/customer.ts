@@ -18,6 +18,7 @@ export class CustomerController {
     this.getAddresses = this.getAddresses.bind(this);
     this.updateAddress = this.updateAddress.bind(this);
     this.deleteAddress = this.deleteAddress.bind(this);
+    this.getOrderById = this.getOrderById.bind(this);
   }
   async getAllProducts(req: Request, res: Response) {
     try {
@@ -208,6 +209,22 @@ export class CustomerController {
         req.params.id,
         req.body
       );
+      res.status(200).json({ status: STATUS_CODES.OK, data });
+    } catch (error) {
+      if (error instanceof Error)
+        res
+          .status(400)
+          .json({ status: STATUS_CODES.BAD_REQUEST, error: error.message });
+      else
+        res.status(400).json({
+          status: STATUS_CODES.BAD_REQUEST,
+          error: "Something went wrong",
+        });
+    }
+  }
+  async getOrderById(req: Request, res: Response) {
+    try {
+      const data = await this.customerService.getOrderById(req.params.id);
       res.status(200).json({ status: STATUS_CODES.OK, data });
     } catch (error) {
       if (error instanceof Error)

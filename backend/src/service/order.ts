@@ -45,11 +45,11 @@ export class OrderService {
     }
     return await this.orderModel.find();
   }
-  async getOrderById(orderId: string): Promise<IOrder> {
+  async getOrderById(orderId: string): Promise<IOrder[]> {
     return (await this.getOrders(
       { _id: orderId } as any,
       true
-    )) as unknown as IOrder;
+    )) as unknown as IOrder[];
   }
   async deleteOrderById(orderId: string): Promise<IOrder> {
     return (await this.orderModel.findByIdAndDelete(orderId)) as IOrder;

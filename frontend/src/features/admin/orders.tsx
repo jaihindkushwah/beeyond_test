@@ -1,5 +1,6 @@
-import OrderCard from "../../components/order-card";
+// import OrderCard from "@/components/order-card";
 import { useAdminContext } from "@/context/AdminContext";
+import CustomOrderCard from "./CustomOrderCard";
 
 function AdminOrders() {
   const { allOrders } = useAdminContext();
@@ -12,7 +13,7 @@ function AdminOrders() {
         </div>
         <div className="space-y-2">
           {allOrders.map((order) => (
-            <OrderCard key={order._id} order={order} />
+            <CustomOrderCard order={order} key={order._id} />
           ))}
         </div>
       </div>

@@ -8,6 +8,7 @@ import {
   Bell,
   Users,
   ShieldIcon as ShieldUser,
+  Menu,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -72,11 +73,11 @@ export function Header({
         path: "/partner/orders",
         icon: <ShoppingBag className="h-4 w-4" />,
       },
-      {
-        name: "Status",
-        path: "/partner/status",
-        icon: <Users className="h-4 w-4" />,
-      },
+      // {
+      //   name: "Status",
+      //   path: "/partner/status",
+      //   icon: <Users className="h-4 w-4" />,
+      // },
       {
         name: "Notifications",
         path: "/partner/notifications",
@@ -120,6 +121,7 @@ export function Header({
             </div>
             <h1 className="text-xl font-bold text-foreground">Beeyond</h1>
           </Link>
+          {/* Desktop Navigation - Hidden on small screens */}
           <nav className="hidden md:flex items-center space-x-6">
             {navLinks[role].map((link) => (
               <Link
@@ -143,17 +145,14 @@ export function Header({
                   className="relative h-10 w-auto px-2 rounded-full hover:bg-accent"
                 >
                   <div className="flex items-center space-x-2">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage
-                        src={user.avatarUrl || "/placeholder.svg"}
-                        alt={user.name}
-                      />
-                      <AvatarFallback className="text-xs">
+                    <Avatar className="h-10 w-10 rounded-full">
+                      <AvatarImage src={"./avtar.jpg"} alt={user.name} />
+                      <AvatarFallback className="text-xs text-black capitalize">
                         {getInitials(user.name)}
                       </AvatarFallback>
                     </Avatar>
                     <div className="hidden sm:flex flex-col items-start">
-                      <span className="text-sm font-medium text-foreground">
+                      <span className="text-sm font-medium text-foreground capitalize">
                         {user.name}
                       </span>
                       {user.email && (
@@ -168,7 +167,7 @@ export function Header({
               <DropdownMenuContent className="w-56" align="end" forceMount>
                 <div className="flex items-center justify-start gap-2 p-2">
                   <div className="flex flex-col space-y-1 leading-none">
-                    <p className="font-medium">{user.name}</p>
+                    <p className="font-medium capitalize">{user.name}</p>
                     {user.email && (
                       <p className="w-[200px] truncate text-sm text-muted-foreground">
                         {user.email}
@@ -177,6 +176,19 @@ export function Header({
                   </div>
                 </div>
                 <DropdownMenuSeparator />
+
+                <div className="md:hidden">
+                  {navLinks[role].map((link) => (
+                    <DropdownMenuItem key={link.name} asChild>
+                      <Link to={link.path} className="cursor-pointer">
+                        {link.icon}
+                        <span className="ml-2">{link.name}</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  ))}
+                  <DropdownMenuSeparator />
+                </div>
+
                 <DropdownMenuItem asChild>
                   <Link to="/profile" className="cursor-pointer">
                     <User className="mr-2 h-4 w-4" />
@@ -200,14 +212,51 @@ export function Header({
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <div className="flex items-center space-x-2">
-              <Button variant="ghost" asChild>
-                <Link to="/login">Sign In</Link>
-              </Button>
-              <Button asChild>
-                <Link to="/register">Sign Up</Link>
-              </Button>
-            </div>
+            <>
+              {/* Mobile Menu for Non-Authenticated Users */}
+              <div className="md:hidden">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm">
+                      <Menu className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56" align="end">
+                    {navLinks[role].map((link) => (
+                      <DropdownMenuItem key={link.name} asChild>
+                        <Link to={link.path} className="cursor-pointer">
+                          {link.icon}
+                          <span className="ml-2">{link.name}</span>
+                        </Link>
+                      </DropdownMenuItem>
+                    ))}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link to="/login" className="cursor-pointer">
+                        <User className="mr-2 h-4 w-4" />
+                        <span>Sign In</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/register" className="cursor-pointer">
+                        <Settings className="mr-2 h-4 w-4" />
+                        <span>Sign Up</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+
+              {/* Desktop Auth Buttons */}
+              <div className="hidden md:flex items-center space-x-2">
+                <Button variant="ghost" asChild>
+                  <Link to="/login">Sign In</Link>
+                </Button>
+                <Button asChild>
+                  <Link to="/register">Sign Up</Link>
+                </Button>
+              </div>
+            </>
           )}
         </div>
       </div>

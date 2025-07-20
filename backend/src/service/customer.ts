@@ -150,4 +150,9 @@ export class CustomerService {
   ) {
     return await this.addressService.updateAddressById(addressId, addressInput);
   }
+  async getOrderById(orderId: string) {
+    const data = await this.orderService.getOrderById(orderId);
+    if (data.length === 0) throw new Error("Order not found");
+    return data[0];
+  }
 }

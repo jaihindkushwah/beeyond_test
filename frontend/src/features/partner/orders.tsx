@@ -1,13 +1,11 @@
 import { useMemo } from "react";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
 import { usePartnerContext } from "@/context/PartnerContext";
+import OrderCard from "@/components/order-card";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 function PartnerOrderHistory() {
+  const navigate = useNavigate();
   const { myOrders, loading } = usePartnerContext();
   const currentOrders = useMemo(
     () => myOrders.filter((order) => order.status !== "delivered"),
@@ -46,24 +44,18 @@ function PartnerOrderHistory() {
                 </p>
               )}
               {currentOrders.map((order) => (
-                <Card
-                  key={order._id}
-                  className="border border-gray-200 rounded-lg p-4"
-                >
-                  <CardHeader>
-                    <p className="text-gray-600">Order ID: {order._id}</p>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-600">
-                      Order Date:{" "}
-                      {new Date(order.createdAt).toLocaleDateString()}
-                    </p>
-                    <p className="text-gray-600">
-                      Order Status: {order.status}
-                    </p>
-                  </CardContent>
-                  <CardFooter></CardFooter>
-                </Card>
+                <OrderCard key={order._id} order={order}>
+                  <div className="w-full flex justify-end mt-2">
+                    <Button
+                      onClick={() => navigate(`/partner/order/${order._id}`)}
+                      title="Update Order"
+                      className=" mt-2 w-1/3  bg-blue-600 text-white hover:text-white hover:bg-blue-600 rounded-none"
+                      variant={"outline"}
+                    >
+                      Action
+                    </Button>
+                  </div>
+                </OrderCard>
               ))}
             </div>
           </div>
@@ -80,20 +72,7 @@ function PartnerOrderHistory() {
                 </p>
               )}
               {pastOrders.map((order) => (
-                <div
-                  key={order._id}
-                  className="border border-gray-200 rounded-lg p-4"
-                >
-                  <p className="text-gray-600">Order ID: {order._id}</p>
-                  <p className="text-gray-600">
-                    Order Date: {new Date(order.createdAt).toLocaleDateString()}
-                  </p>
-                  <p className="text-gray-600">Order Status: {order.status}</p>
-                  <p className="text-gray-600">
-                    Delivery Date:{" "}
-                    {new Date(order.updatedAt).toLocaleDateString()}
-                  </p>
-                </div>
+                <OrderCard order={{ ...order }}></OrderCard>
               ))}
             </div>
           </div>

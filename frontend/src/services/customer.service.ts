@@ -74,5 +74,8 @@ export class CustomerService {
     const res = await this.axiosInstance.post("/customer/create-address", data);
     return res.data?.data;
   }
+  async getOrderByOrderId(id: string): Promise<IOrder | null> {
+    const res = await this.axiosInstance.get(`/customer/order/${id}`);
+    return res.data?.data;
+  }
 }
-

@@ -30,7 +30,6 @@ export function setupCartSocketEvents(io: Server) {
   io.on("connect", (socket: Socket) => {
     const token = socket.handshake.auth.token;
     let decoded;
-
     try {
       decoded = token && authUtilsService.verifyToken(token);
       if (!decoded) throw new Error("Token missing or invalid");
@@ -176,7 +175,7 @@ export function setupCartSocketEvents(io: Server) {
       socket.leave(userId);
       socket.to("partner-room").emit("partnerDisconnected", userId);
       socket.to("admin-room").emit("adminDisconnected", userId);
-      console.log("user disconnected");
+      // console.log("user disconnected");
     });
   });
 }

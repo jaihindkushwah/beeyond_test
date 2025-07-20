@@ -1,4 +1,5 @@
 import { PartnerController } from "@/controller/partner";
+import { roleBased } from "@/middleware/rolebased";
 import { OrderService } from "@/service/order";
 import { PartnerService } from "@/service/partner";
 import { Router } from "express";
@@ -12,10 +13,26 @@ export class PartnerRoutes {
     this.partnerController = new PartnerController(partnerService);
   }
   routes() {
-    this.router.get("/my-orders", this.partnerController.getMyOrders);
-    this.router.get("/unassigned-orders", this.partnerController.getUnassignedOrders);
-    this.router.get("/accept-order/:id", this.partnerController.acceptOrder);
-    this.router.get("/reject-order/:id", this.partnerController.rejectOrder);
+    this.router.get(
+      "/my-orders",
+      roleBased("partner"),
+      this.partnerController.getMyOrders
+    );
+    this.router.get(
+      "/unassigned-orders",
+      roleBased("partner"),
+      this.partnerController.getUnassignedOrders
+    );
+    this.router.get(
+      "/accept-order/:id",
+      roleBased("partner"),
+      this.partnerController.acceptOrder
+    );
+    this.router.get(
+      "/reject-order/:id",
+      roleBased("partner"),
+      this.partnerController.rejectOrder
+    );
     return this.router;
   }
 }

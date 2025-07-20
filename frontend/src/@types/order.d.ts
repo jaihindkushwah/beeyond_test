@@ -56,6 +56,7 @@ export interface IOrder {
   updatedAt: string;
   customerInfo: ICustomerInfo;
   deliveryAddressInfo: IAddress;
+  deliveryPartnerId?: string;
 }
 
 export interface ISocketOrderChangeResponse {

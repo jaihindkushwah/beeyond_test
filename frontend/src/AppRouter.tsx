@@ -15,7 +15,9 @@ import AdminOrders from "./features/admin/orders";
 import Partners from "./features/admin/partners";
 import PartnerOrderHistory from "./features/partner/orders";
 import Notifications from "./features/partner/notifications";
-import PartnerOrderStatus from "./features/partner/status";
+import PartnerOrderStatus from "./features/partner/partnert-order-status";
+import CustomerOrderStatus from "./features/orders/order-status";
+import AdminOrderStatus from "./features/admin/admin-order-status";
 
 const AppContainer = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -43,9 +45,9 @@ function AppRouter() {
         { path: "/products", element: <ProductCatalog /> },
         { path: "/products/:id", element: <SingleProduct /> },
         { path: "/cart", element: <CartPage /> },
-        // { path: "/checkout", element: <h1>Checkout</h1> },
         { path: "/profile", element: <h1>Profile</h1> },
         { path: "/order-history", element: <CustomerOrderHistory /> },
+        { path: "/order/:id", element: <CustomerOrderStatus /> },
       ],
     },
 
@@ -66,6 +68,10 @@ function AppRouter() {
           path: "/admin/partners",
           element: <Partners />,
         },
+        {
+          path: "/admin/order/:id",
+          element: <AdminOrderStatus />,
+        },
       ],
     },
     // Partner routes
@@ -78,9 +84,8 @@ function AppRouter() {
       ),
       children: [
         { path: "/partner/orders", element: <PartnerOrderHistory /> },
-        { path: "/partner/products", element: <h1>Partner Products</h1> },
         { path: "/partner/notifications", element: <Notifications /> },
-        { path: "/partner/status", element: <PartnerOrderStatus /> },
+        { path: "/partner/order/:id", element: <PartnerOrderStatus /> },
       ],
     },
 

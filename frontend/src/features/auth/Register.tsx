@@ -44,6 +44,7 @@ function Register() {
         className="w-full"
       />
       <Select
+        value={inputUser?.role || ""}
         onValueChange={(role: UserRole) =>
           setInputUser({ ...inputUser, role: role })
         }

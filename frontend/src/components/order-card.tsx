@@ -1,243 +1,145 @@
-import type { IOrder } from "@/@types/order";
+import { useMemo } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  Calendar,
+  CreditCard,
+  Package,
+  Truck,
+  CheckCircle,
+  XCircle,
+  Clock,
+} from "lucide-react";
+import type { IOrder } from "@/@types/order";
 import { Badge } from "@/components/ui/badge";
-import { CalendarDays, MapPin, User, Package, DollarSign } from "lucide-react";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 
-function OrderCard({ order }: { order: IOrder }) {
-  const fullAddress = Object.entries(order.deliveryAddressInfo)
-    .map(([, value]) => `${value}`)
-    .join(", ");
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "pending":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200";
-      case "accepted":
-        return "bg-blue-200 text-blue-800 border-blue-200";
-      case "shipped":
-        return "bg-purple-100 text-purple-800 border-purple-200";
-      case "delivered":
-        return "bg-green-100 text-green-800 border-green-200";
+export default function OrderCard({
+  order,
+  children,
+}: {
+  order: IOrder;
+  children?: React.ReactNode;
+}) {
+  const orderStatusConfig = useMemo(() => {
+    switch (order.status) {
       case "cancelled":
-        return "bg-red-100 text-red-800 border-red-200";
+        return {
+          styles: "bg-red-50 text-red-700 border-red-200",
+          icon: <XCircle className="w-3 h-3" />,
+          label: "Cancelled",
+        };
+      case "pickedup":
+        return {
+          styles: "bg-orange-50 text-orange-700 border-orange-200",
+          icon: <Package className="w-3 h-3" />,
+          label: "Picked Up",
+        };
+      case "accepted":
+        return {
+          styles: "bg-green-50 text-green-700 border-green-200",
+          icon: <CheckCircle className="w-3 h-3" />,
+          label: "Accepted",
+        };
+      case "on_the_way":
+        return {
+          styles: "bg-blue-50 text-blue-700 border-blue-200",
+          icon: <Truck className="w-3 h-3" />,
+          label: "On the Way",
+        };
+      case "delivered":
+        return {
+          styles: "bg-emerald-50 text-emerald-700 border-emerald-200",
+          icon: <CheckCircle className="w-3 h-3" />,
+          label: "Delivered",
+        };
       default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
+        return {
+          styles: "bg-yellow-100 text-yellow-800 border-gray-200",
+          icon: <Clock className="w-3 h-3" />,
+          label: "Pending",
+        };
     }
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
-  const totalQuantity = order.items.reduce(
-    (total, item) => total + item.quantity,
-    0
-  );
-  const uniqueProducts = order.items.length;
+  }, [order.status]);
 
   return (
-    <Card className="w-full hover:shadow-lg p-4 gap-2 transition-shadow duration-200 border-l-4">
-      <CardHeader className="pb-1">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-50 rounded-lg">
-              <Package className="h-5 w-5 text-blue-600" />
+    <Card className="group hover:shadow-lg transition-all duration-300 border-0 shadow-sm bg-gradient-to-br from-white to-gray-50/30">
+      <CardHeader className="pb-3">
+        <div className="flex items-start justify-between">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <Package className="w-4 h-4" />
+              <span className="font-medium">Order ID:</span>
+              <code className="bg-gray-100 px-2 py-0.5 rounded text-xs font-mono">
+                #{order._id.slice(-8).toUpperCase()}
+              </code>
             </div>
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900">
-                Order #{order._id.slice(10)}
-              </h2>
-              <div className="flex items-center gap-1 text-sm text-gray-500 mt-1">
-                <CalendarDays className="h-4 w-4" />
-                {formatDate(order.createdAt)}
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <Badge className={getStatusColor(order.status)} variant="outline">
-              {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+            <Badge
+              variant="outline"
+              className={`${orderStatusConfig.styles} font-medium border`}
+            >
+              {orderStatusConfig.icon}
+              <span className="ml-1">{orderStatusConfig.label}</span>
             </Badge>
+          </div>
+          <div className="text-right">
+            <div className="flex items-center gap-1 text-lg font-bold text-gray-900">
+              <CreditCard className="w-4 h-4 text-gray-500" />$
+              {order.totalPrice?.toFixed(2)}
+            </div>
+            <p className="text-xs text-gray-500">Total Amount</p>
           </div>
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-4 mt-0">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg">
-            <User className="h-4 w-4 text-gray-600" />
-            <div className="text-xs">
-              <p className=" text-gray-500">Customer</p>
-              <p className="font-medium  text-gray-900">
-                #{order.customerInfo.name}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-            <DollarSign className="h-4 w-4 text-gray-600" />
-            <div>
-              <p className="text-xs text-gray-500">Total</p>
-              <p className="font-medium text-gray-900">
-                ${order.totalPrice.toFixed(2)}
-              </p>
-            </div>
-          </div>
+      <CardContent className="pt-0">
+        <div className="flex items-center gap-2 text-sm text-gray-600">
+          <Calendar className="w-4 h-4" />
+          <span>Ordered on</span>
+          <time className="font-medium text-gray-900">
+            {new Date(order.createdAt).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            })}
+          </time>
+        </div>
+        <div className="flex items-center gap-2 text-sm text-gray-600 mt-2">
+          <Package className="w-4 h-4" />
+          <span>Total Items:</span>
+          <span className="font-medium text-gray-900">
+            {order.items.length || 0}
+          </span>
+        </div>
 
-          <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-            <MapPin className="h-5 w-5 text-gray-600" />
-            <div>
-              <p className="text-xs text-gray-500">Delivery</p>
-              <p className="font-medium text-xs text-gray-900">
-                #{fullAddress}
-              </p>
+        <div className="mt-4 pt-3 border-t border-gray-100">
+          <div className="flex items-center justify-between text-xs text-gray-500">
+            <span>Track your order</span>
+            <div className="flex gap-1">
+              <div
+                className={`w-2 h-2 rounded-full ${
+                  ["accepted", "on_the_way", "delivered"].includes(order.status)
+                    ? "bg-green-400"
+                    : "bg-gray-300"
+                }`}
+              />
+              <div
+                className={`w-2 h-2 rounded-full ${
+                  ["on_the_way", "delivered"].includes(order.status)
+                    ? "bg-blue-400"
+                    : "bg-gray-300"
+                }`}
+              />
+              <div
+                className={`w-2 h-2 rounded-full ${
+                  order.status === "delivered"
+                    ? "bg-emerald-400"
+                    : "bg-gray-300"
+                }`}
+              />
             </div>
           </div>
         </div>
-        <div className="border-t pt-2 mb-2">
-          <Accordion type="single" collapsible className="w-full">
-            <AccordionItem
-              value="items"
-              className="border border-gray-200 rounded-lg"
-            >
-              <AccordionTrigger className="hover:no-underline px-4 py-3 hover:bg-gray-50 rounded-t-lg data-[state=open]:rounded-b-none">
-                <div className="flex items-center justify-between w-full mr-4">
-                  <div className="flex items-center gap-3">
-                    <div className="p-1.5 bg-blue-50 rounded-md">
-                      <Package className="h-4 w-4 text-blue-600" />
-                    </div>
-                    <div className="text-left">
-                      <h3 className="font-semibold text-gray-900">
-                        Order Items
-                      </h3>
-                      <p className="text-sm text-gray-500">
-                        {uniqueProducts}{" "}
-                        {uniqueProducts === 1 ? "product" : "products"} •{" "}
-                        {totalQuantity} total items
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="px-0 pb-0">
-                <div className="border-t">
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="bg-gray-50/50">
-                        <TableHead className="w-12 pl-4">#</TableHead>
-                        <TableHead className="font-semibold">Product</TableHead>
-                        <TableHead className="text-center font-semibold">
-                          Quantity
-                        </TableHead>
-                        <TableHead className="text-center font-semibold">
-                          Unit Price
-                        </TableHead>
-                        <TableHead className="text-right font-semibold pr-4">
-                          Subtotal
-                        </TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {order.items.map((item, index) => {
-                        // Mock unit price calculation (you can replace with actual data)
-                        const unitPrice = item.price.toFixed(2);
-                        const subtotal = (
-                          Number.parseFloat(unitPrice) * item.quantity
-                        ).toFixed(2);
-
-                        return (
-                          <TableRow
-                            key={item.productId}
-                            className="hover:bg-gray-50/50"
-                          >
-                            <TableCell className="pl-4">
-                              <div className="w-8 h-8 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg flex items-center justify-center">
-                                <span className="text-xs font-semibold text-blue-600">
-                                  {index + 1}
-                                </span>
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex flex-col">
-                                <span className="font-medium text-gray-900">
-                                  {item.name}
-                                </span>
-                                <span className="text-xs text-gray-500 font-mono">
-                                  ID: {item.productId.slice(-8)}
-                                </span>
-                              </div>
-                            </TableCell>
-                            <TableCell className="text-center">
-                              <Badge
-                                variant="outline"
-                                className="font-mono bg-gray-50"
-                              >
-                                {item.quantity}
-                              </Badge>
-                            </TableCell>
-                            <TableCell className="text-center">
-                              <span className="font-mono text-sm">
-                                ${unitPrice}
-                              </span>
-                            </TableCell>
-                            <TableCell className="text-right pr-4">
-                              <span className="font-semibold text-gray-900">
-                                ${subtotal}
-                              </span>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
-                    </TableBody>
-                  </Table>
-
-                  {/* Enhanced Summary Section */}
-                  <div className="border-t bg-gray-50/50 p-4 space-y-3">
-                    <div className="flex justify-between items-center text-sm">
-                      <span className="text-gray-600">Items Summary:</span>
-                      <div className="flex items-center gap-4">
-                        <span className="text-gray-600">
-                          {uniqueProducts} unique products
-                        </span>
-                        <span className="text-gray-600">
-                          {totalQuantity} total quantity
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex justify-between items-center pt-2 border-t border-gray-200">
-                      <span className="font-semibold text-gray-900">
-                        Order Total:
-                      </span>
-                      <span className="text-lg font-bold text-gray-900">
-                        ${order.totalPrice.toFixed(2)}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        </div>
+        {children}
       </CardContent>
     </Card>
   );
 }
-
-export default OrderCard;

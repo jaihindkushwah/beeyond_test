@@ -1,9 +1,10 @@
 import type { IOrder } from "@/@types/order";
-import OrderCard from "@/components/order-card";
+// import OrderCard from "@/components/order-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getDataFromSessionStorage } from "@/lib/utils";
 import { CustomerService } from "@/services/customer.service";
 import { useEffect, useState } from "react";
+import CustomOrderCard from "./components/CustomOrderCard";
 
 function CustomerOrderHistory() {
   const [currentOrders, setCurrentOrders] = useState<IOrder[]>([]);
@@ -55,22 +56,25 @@ function CustomerOrderHistory() {
         <div className="grid grid-cols-1 gap-8">
           {/* Current Orders */}
           <div className="bg-white rounded-lg p-6 shadow-md min-h-40">
-            <Tabs defaultValue="account" className="w-full">
-              <TabsList className="mb-2 gap-6">
+            <Tabs defaultValue="current" className="w-full">
+              <TabsList className="mb-2 gap-2 bg-transparent p-0">
                 <TabsTrigger
-                  value="account"
-                  className="text-base  data-[state=active]:shadow-none mb-1 font-semibold  text-black bg-inherit border-none"
+                  value="current"
+                  className="text-base font-semibold text-black bg-transparent border-none rounded-none px-3 py-1 
+              data-[state=active]:bg-gray-200 data-[state=active]:text-black data-[state=active]:shadow-none"
                 >
                   Current Orders
                 </TabsTrigger>
                 <TabsTrigger
-                  value="password"
-                  className="text-base  data-[state=active]:shadow-none mb-1 font-semibold  text-black bg-inherit border-none"
+                  value="past"
+                  className="text-base font-semibold text-black bg-transparent border-none rounded-none px-3 py-1 
+              data-[state=active]:bg-gray-200 data-[state=active]:text-black data-[state=active]:shadow-none"
                 >
                   Past Orders
                 </TabsTrigger>
               </TabsList>
-              <TabsContent value="account">
+
+              <TabsContent value="current">
                 <div className="space-y-4">
                   {currentOrders.length === 0 && (
                     <p className="text-gray-600 text-center mt-10">
@@ -78,14 +82,11 @@ function CustomerOrderHistory() {
                     </p>
                   )}
                   {currentOrders.map((order) => (
-                    <OrderCard key={order._id} order={order} />
+                    <CustomOrderCard key={order._id} order={order} />
                   ))}
                 </div>
               </TabsContent>
-              <TabsContent value="password">
-                {/* <h2 className="text-xl font-semibold mb-4 text-black">
-                  Past Orders
-                </h2> */}
+              <TabsContent value="past">
                 <div className="space-y-4">
                   {pastOrders.length === 0 && (
                     <p className="text-gray-600 text-center mt-10">
@@ -93,7 +94,7 @@ function CustomerOrderHistory() {
                     </p>
                   )}
                   {pastOrders.map((order) => (
-                    <OrderCard key={order._id} order={order} />
+                    <CustomOrderCard key={order._id} order={order} />
                   ))}
                 </div>
               </TabsContent>
