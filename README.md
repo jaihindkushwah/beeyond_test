@@ -22,8 +22,8 @@ Design and build a **Real-Time Quick Commerce Application** where:
 ### 3. 🛠️ Stack Used
 
 - **Frontend**: React.js, Tailwind CSS, TypeScript, Shadcn UI  
-- **Backend**: Node.js, Express.js, TypeScript  
-- **Real-time Communication**: Socket.IO  
+- **Backend**: Node.js, Express.js, TypeScript, Redis  
+- **Real-time Communication**: Socket.io + Redis Adapter 
 - **Database**: MongoDB Atlas  
 - **Authentication**: JWT (JSON Web Tokens)  
 - **DevOps**: Docker, Docker Compose, Nginx  
@@ -115,6 +115,7 @@ cd beeyond_test-main
 API_PORT=8000
 MONGO_URI=mongodb+srv://user:password@cluster0.qjf5hf3.mongodb.net/quick-com
 JWT_SECRET_KEY=secret
+REDIS_URL=redis://localhost:6379
 
 # 6. Start the containers
 docker-compose up -d
@@ -122,7 +123,7 @@ docker-compose up -d
 ```
 
 ### 6. Hosting & Deployment
-Dockerized backend and frontend served via Nginx reverse proxy which is in the **frontend** folder
+Dockerized backend and frontend served via Nginx reverse proxy, which is in the **frontend** folder
 
 Containers are managed via docker-compose
 
