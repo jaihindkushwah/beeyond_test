@@ -1,4 +1,5 @@
 import type { ICart, ICartContextType } from "@/@types/cart";
+import type { IOrder, ISocketOrderChangeResponse } from "@/@types/order";
 import { useAuthContext } from "@/context/AuthContext";
 import { getDataFromSessionStorage } from "@/lib/utils";
 import { CustomerService } from "@/services/customer.service";
@@ -26,6 +27,7 @@ export function CartContextProvider({ children }: any) {
   const [cartData, setCartData] = useState<ICart>({} as ICart);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [orders, setOrders] = useState<IOrder[]>([]);
 
   useEffect(() => {
     const token = user?.token || getDataFromSessionStorage("token");
@@ -48,12 +50,38 @@ export function CartContextProvider({ children }: any) {
     const handleUpdatedCart = (data: ICart) => {
       setCartData(data);
     };
+    const orderStatusHandler = (data: ISocketOrderChangeResponse) => {
+      setOrders((prev) =>
+        prev.map((order) => {
+          if (order._id === data.orderId) {
+            return {
+              ...order,
+              status: data.status,
+              deliveryPartnerId: data.updatedBy,
+            };
+          }
+          return order;
+        })
+      );
+    };
+    const orderPlacedHandler = (data: IOrder) => {
+      console.log("🛒 Order placed:", data);
+      setOrders((prev) => [data, ...prev]);
+    };
     customerSocketService.socket.on("updatedCartData", handleUpdatedCart);
+    customerSocketService.socket.on("orderStatusChanged", orderStatusHandler);
+    customerSocketService.socket.on("orderPlaced", orderPlacedHandler);
     return () => {
       customerSocketService.socket.off("updatedCartData", handleUpdatedCart);
+      customerSocketService.socket.off(
+        "orderStatusChanged",
+        orderStatusHandler
+      );
+      customerSocketService.socket.off("orderPlaced", orderPlacedHandler);
       customerSocketService.disconnect();
     };
   }, [user?.token]);
+
   const handleAddToCart = (cart: ICart) => setCartData(cart);
   const handeUpdateCart = useCallback(async (id: string, quantity: number) => {
     try {
@@ -95,6 +123,8 @@ export function CartContextProvider({ children }: any) {
         handleClearCart,
         loading,
         error,
+        setOrders,
+        orders,
       }}
     >
       {children}

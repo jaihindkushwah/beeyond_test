@@ -40,8 +40,9 @@ function Checkout() {
         const res = await customerService.createAddress(data);
         console.log(res);
         setAddresses((prev) => [...prev, res]);
-      } catch (error) {
+      } catch (error: any) {
         console.log(error);
+        toast.error(error.message);
       }
     },
     []
@@ -64,14 +65,14 @@ function Checkout() {
             return;
           }
           toast.success("Order placed successfully");
-          navigate("/");
           setCartData({} as ICart);
+          navigate("/");
         }
       );
     } catch (error) {
       console.log(error);
     }
-  }, [addressId, cartData, navigate]);
+  }, [addressId, cartData, navigate, setCartData]);
 
   return (
     <div className="w-full mt-4 min-h-screen">

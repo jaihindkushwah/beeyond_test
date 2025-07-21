@@ -16,6 +16,8 @@ export interface ICartContextType {
   setCartData: React.Dispatch<React.SetStateAction<ICart>>;
   loading: boolean;
   error: string | null;
+  orders: IOrder[];
+  setOrders: React.Dispatch<React.SetStateAction<IOrder[]>>;
   handleAddToCart: (cart: ICart) => void;
   handeUpdateCart: (id: string, quantity: number) => void;
   handleRemoveFromCart: (id: string) => void;

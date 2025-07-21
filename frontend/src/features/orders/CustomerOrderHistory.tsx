@@ -1,33 +1,24 @@
-import type { IOrder } from "@/@types/order";
-// import OrderCard from "@/components/order-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getDataFromSessionStorage } from "@/lib/utils";
 import { CustomerService } from "@/services/customer.service";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import CustomOrderCard from "./components/CustomOrderCard";
+import { useCartContext } from "@/context/CartContext";
+import { useAuthContext } from "@/context/AuthContext";
 
 function CustomerOrderHistory() {
-  const [currentOrders, setCurrentOrders] = useState<IOrder[]>([]);
-  const [pastOrders, setPastOrders] = useState<IOrder[]>([]);
+  const { orders, setOrders } = useCartContext();
+  const { user } = useAuthContext();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const token = user?.token;
+    if (!token) return;
     const fetchOrders = async () => {
       try {
         setLoading(true);
-        const customerService = CustomerService.init(
-          getDataFromSessionStorage("token")
-        );
+        const customerService = CustomerService.init(token);
         const allOrders = await customerService.getMyOrders();
-        const current = allOrders.filter(
-          (order) => order.status !== "delivered"
-        );
-        const past = allOrders.filter(
-          (order) =>
-            order.status === "delivered" || order.status === "cancelled"
-        );
-        setCurrentOrders(current);
-        setPastOrders(past);
+        setOrders(allOrders);
       } catch (error) {
         console.error("Failed to fetch orders", error);
       } finally {
@@ -35,7 +26,19 @@ function CustomerOrderHistory() {
       }
     };
     fetchOrders();
-  }, []);
+  }, [setOrders, user?.token]);
+
+  const currentOrders = useMemo(
+    () => orders.filter((order) => order.status !== "delivered"),
+    [orders]
+  );
+  const pastOrders = useMemo(
+    () =>
+      orders.filter(
+        (order) => order.status === "delivered" || order.status === "cancelled"
+      ),
+    [orders]
+  );
 
   if (loading) {
     return (

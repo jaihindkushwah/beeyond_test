@@ -55,7 +55,7 @@ export function Header({
 }: HeaderProps) {
   const navLinks = {
     customer: [
-      { name: "Home", path: "/", icon: <Home className="h-4 w-4" /> },
+      { name: "Home", path: "/products", icon: <Home className="h-4 w-4" /> },
       {
         name: "Order History",
         path: "/order-history",
@@ -113,7 +113,10 @@ export function Header({
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex h-16 items-center justify-between px-6">
         <div className="flex items-center space-x-8">
-          <Link to="/" className="flex items-center space-x-2">
+          <Link
+            to={navLinks[role][0].path}
+            className="flex items-center space-x-2"
+          >
             <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
               <span className="text-primary-foreground font-bold text-sm">
                 B

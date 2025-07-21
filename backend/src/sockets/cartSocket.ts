@@ -2,7 +2,7 @@ import { ICartItem, OrderStatus } from "@/@types/schema";
 import { AddressService } from "@/service/address";
 import { authUtilsService } from "@/service/auth.util";
 import { CartService } from "@/service/cart";
-import { CustomerService } from "@/service/customer";
+import { CustomerService, OrderStatusEnum } from "@/service/customer";
 import { OrderService } from "@/service/order";
 import { PartnerService } from "@/service/partner";
 import { ProductService } from "@/service/product";
@@ -85,9 +85,17 @@ export function setupCartSocketEvents(io: Server) {
       try {
         const order = await customerService.placeOrder(data);
         await emitCartUpdate();
-        const updatedOrder = await orderService.getOrderById(order._id);
+        const updatedOrders = await orderService.getOrderById(order._id);
+        const updatedOrder = updatedOrders?.[0] || {};
+        const customerId = order.customerId as any;
+        // console.log(updatedOrder);
+        io.to(customerId).emit("orderPlaced", updatedOrder);
         io.to("admin-room").emit("orderPlaced", updatedOrder);
-        ack({ success: true, message: "Order placed successfully" });
+        ack({
+          success: true,
+          message: "Order placed successfully",
+          data: updatedOrder,
+        });
       } catch (err) {
         socket.emit("error", {
           message: err.message || "Failed to place order",
@@ -149,12 +157,12 @@ export function setupCartSocketEvents(io: Server) {
         const customerId = updatedOrder?.customerId.toString();
         io.to(customerId).emit("orderStatusChanged", {
           orderId,
-          status: updatedOrder.status,
+          status: OrderStatusEnum.ACCEPTED,
           updatedAt: new Date(),
         });
         io.to("admin-room").emit("orderStatusChanged", {
           orderId,
-          status: updatedOrder.status,
+          status: OrderStatusEnum.ACCEPTED,
           updatedBy: userId,
           updatedAt: new Date(),
         });

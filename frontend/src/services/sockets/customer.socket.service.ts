@@ -1,5 +1,6 @@
 import type { ISocketResponse } from "@/@types/product";
 import { SocketService } from "./socket.service";
+import type { IOrder } from "@/@types/order";
 
 export class CustomerSocketService extends SocketService {
   constructor() {
@@ -39,13 +40,17 @@ export class CustomerSocketService extends SocketService {
 
   emitPlaceOrder(
     data: { cartId: string; addressId: string },
-    callback?: (response: ISocketResponse) => void
+    callback?: (response: ISocketResponse<IOrder[]>) => void
   ): void {
     if (this.socket?.connected) {
-      this.socket.emit("placeOrder", data, (response: ISocketResponse) => {
-        console.log("🛒 Order placed:", response);
-        if (callback) callback(response);
-      });
+      this.socket.emit(
+        "placeOrder",
+        data,
+        (response: ISocketResponse<IOrder[]>) => {
+          console.log("🛒 Order placed:", response);
+          if (callback) callback(response);
+        }
+      );
     } else {
       console.warn("⚠️ Socket not connected. Cannot emit place order.");
       if (callback) {

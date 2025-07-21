@@ -96,7 +96,7 @@ export function PartnerContextProvider({
         if (acceptedOrder) {
           setMyOrders((prev) =>
             [
-              acceptedOrder,
+              { ...acceptedOrder, status: data.status },
               ...prev.filter((order) => order._id !== data.orderId),
             ].filter(Boolean)
           );

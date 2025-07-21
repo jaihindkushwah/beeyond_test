@@ -2,29 +2,21 @@ import { useParams } from "react-router-dom";
 import { OrderStatusDetails } from "../orders/components/OrderStatusDetails";
 import type { IOrder } from "@/@types/order";
 import { useEffect, useState } from "react";
-import { useAuthContext } from "@/context/AuthContext";
-import { CustomerService } from "@/services/customer.service";
+import { useCartContext } from "@/context/CartContext";
 
 function CustomerOrderStatus() {
   const { id } = useParams() as { id: string };
-  const { user } = useAuthContext();
+  const { orders } = useCartContext();
   const [order, setOrder] = useState<IOrder | null>(null);
   useEffect(() => {
-    if (!user?.token) return;
-    const fetchOrder = async () => {
-      try {
-        const customerService = CustomerService.init(user.token!);
-        const data = await customerService.getOrderByOrderId(id);
-        // console.log(data);
-        setOrder(data);
-      } catch (error) {
-        console.error("Failed to fetch order", error);
-      }
-    };
-    fetchOrder();
-  }, [id, user?.token]);
+    const order = orders.find((order) => order._id === id);
+    setOrder(order);
+  }, [id, orders]);
   const orderStatusChangeHandler = async () => {};
-  if (!order) return null;
+  if (!order)
+    return (
+      <div className="text-red-500 text-sm text-center">Order not found </div>
+    );
   return (
     order && (
       <OrderStatusDetails
