@@ -1,11 +1,11 @@
 import type { IOrder } from "@/@types/order";
 import { useMemo, useState } from "react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Check } from "lucide-react";
+import { Check, MapPin } from "lucide-react";
 import { usePartnerContext } from "@/context/PartnerContext";
+import OrderCard from "@/components/order-card";
 
-function OrderCard({ order }: { order: IOrder }) {
+function CustomOrderCard({ order }: { order: IOrder }) {
   const { acceptOrderHandler } = usePartnerContext();
   const [acceptingOrder, setAcceptingOrder] = useState<string | null>(null);
   const fullAddress = useMemo(
@@ -26,33 +26,21 @@ function OrderCard({ order }: { order: IOrder }) {
     }
   };
   return (
-    <Card key={order._id}>
-      <CardHeader>
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <div className="font-semibold text-lg">#{order._id}</div>
-            <div className="text-right">
-              <div className="font-medium text-lg">${order.totalPrice}</div>
-              <div className="text-sm text-muted-foreground">
-                {order.items.length} items
-              </div>
-            </div>
-          </div>
-          <div className="space-y-1">
-            <div className="font-medium">{order.customerInfo.name}</div>
-            <div className="text-sm text-muted-foreground">{fullAddress}</div>
-            <div className="text-sm text-muted-foreground">
-              {order.customerInfo.phone}
-            </div>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent>
+    <OrderCard isTrackable={false} order={order}>
+      <div className="mt-2 mb-4">
+        <p className="flex text-sm text-gray-600 items-center gap-2">
+          <MapPin className="w-4 h-4 text-gray-500" /> Delivery Address:
+        </p>
+        <p className=" text-gray-600 px-4 text-xs font-semibold">
+          {fullAddress}
+        </p>
+      </div>
+      <div className="flex w-full justify-end">
         <Button
           variant={"outline"}
           onClick={() => handleAcceptOrder(order._id)}
           disabled={acceptingOrder === order._id}
-          className="w-full bg-green-400 hover:bg-green-500 text-white font-semibold py-2 px-4 rounded-lg flex items-center justify-center hover:text-white"
+          className="min-sm:w-1/4 w-full  bg-green-400 hover:bg-green-500 text-white font-semibold py-2 px-4 rounded-lg flex items-center hover:text-white"
         >
           {acceptingOrder === order._id ? (
             <>
@@ -66,8 +54,8 @@ function OrderCard({ order }: { order: IOrder }) {
             </>
           )}
         </Button>
-      </CardContent>
-    </Card>
+      </div>
+    </OrderCard>
   );
 }
 
@@ -92,7 +80,7 @@ function Notifications() {
             </div>
           )}
           {unassignedOrders.map((order) => (
-            <OrderCard key={order._id} order={order} />
+            <CustomOrderCard key={order._id} order={order} />
           ))}
         </div>
       </div>

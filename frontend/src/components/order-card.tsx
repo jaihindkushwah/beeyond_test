@@ -15,9 +15,11 @@ import { Badge } from "@/components/ui/badge";
 export default function OrderCard({
   order,
   children,
+  isTrackable = true,
 }: {
   order: IOrder;
   children?: React.ReactNode;
+  isTrackable?: boolean;
 }) {
   const orderStatusConfig = useMemo(() => {
     switch (order.status) {
@@ -109,35 +111,38 @@ export default function OrderCard({
             {order.items.length || 0}
           </span>
         </div>
-
-        <div className="mt-4 pt-3 border-t border-gray-100">
-          <div className="flex items-center justify-between text-xs text-gray-500">
-            <span>Track your order</span>
-            <div className="flex gap-1">
-              <div
-                className={`w-2 h-2 rounded-full ${
-                  ["accepted", "on_the_way", "delivered"].includes(order.status)
-                    ? "bg-green-400"
-                    : "bg-gray-300"
-                }`}
-              />
-              <div
-                className={`w-2 h-2 rounded-full ${
-                  ["on_the_way", "delivered"].includes(order.status)
-                    ? "bg-blue-400"
-                    : "bg-gray-300"
-                }`}
-              />
-              <div
-                className={`w-2 h-2 rounded-full ${
-                  order.status === "delivered"
-                    ? "bg-emerald-400"
-                    : "bg-gray-300"
-                }`}
-              />
+        {isTrackable ? (
+          <div className="mt-4 pt-3 border-t border-gray-100">
+            <div className="flex items-center justify-between text-xs text-gray-500">
+              <span>Track your order</span>
+              <div className="flex gap-1">
+                <div
+                  className={`w-2 h-2 rounded-full ${
+                    ["accepted", "on_the_way", "delivered"].includes(
+                      order.status
+                    )
+                      ? "bg-green-400"
+                      : "bg-gray-300"
+                  }`}
+                />
+                <div
+                  className={`w-2 h-2 rounded-full ${
+                    ["on_the_way", "delivered"].includes(order.status)
+                      ? "bg-blue-400"
+                      : "bg-gray-300"
+                  }`}
+                />
+                <div
+                  className={`w-2 h-2 rounded-full ${
+                    order.status === "delivered"
+                      ? "bg-emerald-400"
+                      : "bg-gray-300"
+                  }`}
+                />
+              </div>
             </div>
           </div>
-        </div>
+        ) : null}
         {children}
       </CardContent>
     </Card>

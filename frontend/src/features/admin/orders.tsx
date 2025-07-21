@@ -12,6 +12,11 @@ function AdminOrders() {
           <p className="text-gray-600 text-sm">View and manage your orders</p>
         </div>
         <div className="space-y-2">
+          {allOrders.length === 0 && (
+            <div className="text-red-500 text-center text-sm font-semibold">
+              You have no new orders
+            </div>
+          )}
           {allOrders.map((order) => (
             <CustomOrderCard order={order} key={order._id} />
           ))}

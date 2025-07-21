@@ -93,6 +93,11 @@ function Partners() {
           <p className="text-gray-600 text-sm">View and manage your partners</p>
         </div>
         <div className="space-y-2">
+          {parnters.length === 0 && (
+            <div className="text-red-500 text-center text-sm font-semibold">
+              You have no new orders
+            </div>
+          )}
           {parnters.map((partner) => (
             <PartnerCard key={partner._id} partner={partner} />
           ))}

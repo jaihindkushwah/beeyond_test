@@ -61,16 +61,16 @@ export function PartnerContextProvider({
     partnerSocketService.setupConnections();
 
     const handlePlacedOrder = (orderNew: IOrder) => {
-
-      const orders=[orderNew];
-      setMyOrders((prev) => {
-        const existingIds = new Set(prev.map((order) => order._id));
-        const newUniqueOrders = orders.filter(
-          (order) => !existingIds.has(order._id)
-        );
-        return [...newUniqueOrders, ...prev];
-      });
-
+      const orders = [orderNew];
+      if (orderNew.deliveryPartnerId === user.id) {
+        setMyOrders((prev) => {
+          const existingIds = new Set(prev.map((order) => order._id));
+          const newUniqueOrders = orders.filter(
+            (order) => !existingIds.has(order._id)
+          );
+          return [...newUniqueOrders, ...prev];
+        });
+      }
       setUnassignedOrders((prev) => {
         const existingIds = new Set(prev.map((order) => order._id));
         const newUniqueOrders = orders.filter(

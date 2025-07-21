@@ -45,9 +45,13 @@ function AppRouter() {
         { path: "/products", element: <ProductCatalog /> },
         { path: "/products/:id", element: <SingleProduct /> },
         { path: "/cart", element: <CartPage /> },
-        { path: "/profile", element: <h1>Profile</h1> },
+        // { path: "/profile", element: <h1>Profile</h1> },
         { path: "/order-history", element: <CustomerOrderHistory /> },
         { path: "/order/:id", element: <CustomerOrderStatus /> },
+        {
+          path: "*",
+          element: <NotFound />,
+        },
       ],
     },
 
@@ -86,9 +90,21 @@ function AppRouter() {
         { path: "/partner/orders", element: <PartnerOrderHistory /> },
         { path: "/partner/notifications", element: <Notifications /> },
         { path: "/partner/order/:id", element: <PartnerOrderStatus /> },
+        {
+          path: "*",
+          element: <NotFound />,
+        },
       ],
     },
 
+    {
+      path: "/profile",
+      element: <NotFound />,
+    },
+    {
+      path: "/settings",
+      element: <NotFound />,
+    },
     // Public auth routes
     { path: "/login", element: <Login /> },
     { path: "/register", element: <Register /> },
