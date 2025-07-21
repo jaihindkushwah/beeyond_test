@@ -55,7 +55,8 @@ export function AdminContextProvider({
         })
       );
     };
-    const handlePlacedOrder = (orders: IOrder[]) => {
+    const handlePlacedOrder =(orderNew: IOrder) => {
+      const orders=[orderNew];
       setAllOrders((prev) => {
         const existingIds = new Set(prev.map((order) => order._id));
         const newUniqueOrders = orders.filter(
