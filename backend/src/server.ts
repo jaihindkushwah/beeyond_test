@@ -7,6 +7,8 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import { optionalAuthWithValidation } from "./middleware";
 import { setupCartSocketEvents } from "./sockets/cartSocket";
+import { createClient } from "redis";
+import { createAdapter } from "@socket.io/redis-adapter";
 
 export function start(app: Application) {
   securityMiddleware(app);
@@ -43,12 +45,34 @@ function errorHandlerMiddleware(app: Application) {
   });
 }
 
+// function createSocketServer(httpServer: HTTPServer): SocketIOServer {
+//   return new SocketIOServer(httpServer, {
+//     path: "/ws",
+//     cors: {
+//       origin: "*", // 🔐 In production, use your frontend domain here
+//       methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+//     },
+//   });
+// }
+
 function createSocketServer(httpServer: HTTPServer): SocketIOServer {
-  return new SocketIOServer(httpServer, {
+  const io = new SocketIOServer(httpServer, {
     path: "/ws",
     cors: {
-      origin: "*", // 🔐 In production, use your frontend domain here
+      origin: "*",
       methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     },
   });
+
+  const pubClient = createClient({ url: envConfig.REDIS_URL });
+  const subClient = pubClient.duplicate();
+  Promise.all([pubClient.connect(), subClient.connect()])
+    .then(() => {
+      io.adapter(createAdapter(pubClient, subClient));
+      console.log("✅ Redis adapter connected for Socket.IO");
+    })
+    .catch((err) => {
+      console.error(" Redis adapter connection failed", err);
+    });
+  return io;
 }
