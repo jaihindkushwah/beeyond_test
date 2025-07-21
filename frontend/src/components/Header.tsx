@@ -55,7 +55,7 @@ export function Header({
 }: HeaderProps) {
   const navLinks = {
     customer: [
-      { name: "Home", path: "/products", icon: <Home className="h-4 w-4" /> },
+      { name: "Home", path: "/", icon: <Home className="h-4 w-4" /> },
       {
         name: "Order History",
         path: "/order-history",
