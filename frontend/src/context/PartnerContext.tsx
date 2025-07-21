@@ -60,7 +60,9 @@ export function PartnerContextProvider({
     fetchOrders();
     partnerSocketService.setupConnections();
 
-    const handlePlacedOrder = (orders: IOrder[]) => {
+    const handlePlacedOrder = (orderNew: IOrder) => {
+
+      const orders=[orderNew];
       setMyOrders((prev) => {
         const existingIds = new Set(prev.map((order) => order._id));
         const newUniqueOrders = orders.filter(
